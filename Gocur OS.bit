@@ -1,0 +1,208 @@
+@echo off
+setlocal enabledelayedexpansion
+color 0A
+mode con: cols=80 lines=30
+title My Simple Batch OS
+
+:: Check if ANSI.sys is loaded for colors
+if "%ANSICON%"=="" (
+    echo [WARNING] ANSI colors not available. For best experience:
+    echo 1. Install ANSICON from https://github.com/adoxa/ansicon
+    echo 2. Or run in Windows Terminal/ConEmu
+    pause
+)
+
+:MAIN_MENU
+cls
+echo.
+echo   ===============================================================
+echo    ███╗   ███╗██╗   ██╗    ███████╗██╗███╗   ███╗███████╗██╗
+echo    ████╗ ████║╚██╗ ██╔╝    ██╔════╝██║████╗ ████║██╔════╝██║
+echo    ██╔████╔██║ ╚████╔╝     ███████╗██║██╔████╔██║█████╗  ██║
+echo    ██║╚██╔╝██║  ╚██╔╝      ╚════██║██║██║╚██╔╝██║██╔══╝  ═╝
+echo    ██║ ╚═╝ ██║   ██║       ███████║██║██║ ╚═╝ ██║███████╗██╗
+echo    ╚═╝     ╚═╝   ╚═╝       ╚══════╝╚═╝╚═╝     ╚═╝╚══════╝╚═╝
+echo   ===============================================================
+echo.
+echo        1. File Manager       4. Text Editor       7. User Management
+echo        2. System Info        5. Calculator        8. System Settings
+echo        3. Process Manager    6. Network Tools     9. Exit
+echo.
+echo   ===============================================================
+
+choice /c 123456789 /n /m "Select an option: "
+
+if errorlevel 9 exit /b
+if errorlevel 8 goto SYSTEM_SETTINGS
+if errorlevel 7 goto USER_MANAGEMENT
+if errorlevel 6 goto NETWORK_TOOLS
+if errorlevel 5 goto CALCULATOR
+if errorlevel 4 goto TEXT_EDITOR
+if errorlevel 3 goto PROCESS_MANAGER
+if errorlevel 2 goto SYSTEM_INFO
+if errorlevel 1 goto FILE_MANAGER
+
+:FILE_MANAGER
+cls
+echo.
+echo   ===============================================================
+echo    ███████╗██╗██╗     ███████╗    ███╗   ███╗ █████╗ ███╗   ██╗
+echo    ██╔════╝██║██║     ██╔════╝    ████╗ ████║██╔══██╗████╗  ██║
+echo    █████╗  ██║██║     █████╗      ██╔████╔██║███████║██╔██╗ ██║
+echo    ██╔══╝  ██║██║     ██╔══╝      ██║╚██╔╝██║██╔══██║██║╚██╗██║
+echo    ██║     ██║███████╗███████╗    ██║ ╚═╝ ██║██║  ██║██║ ╚████║
+echo    ╚═╝     ╚═╝╚══════╝╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+echo   ===============================================================
+echo.
+echo       1. List Files        4. Create File       7. Copy File
+echo       2. View File        5. Delete File       8. Move File
+echo       3. Edit File        6. Change Directory  9. Back to Main
+echo.
+echo   Current Directory: %cd%
+echo   ===============================================================
+
+choice /c 123456789 /n /m "Select an option: "
+
+if errorlevel 9 goto MAIN_MENU
+if errorlevel 8 goto MOVE_FILE
+if errorlevel 7 goto COPY_FILE
+if errorlevel 6 goto CHANGE_DIR
+if errorlevel 5 goto DELETE_FILE
+if errorlevel 4 goto CREATE_FILE
+if errorlevel 3 goto EDIT_FILE
+if errorlevel 2 goto VIEW_FILE
+if errorlevel 1 (
+    dir /w /p
+    pause
+    goto FILE_MANAGER
+)
+
+:VIEW_FILE
+cls
+set /p filename="Enter filename to view: "
+if exist "%filename%" (
+    type "%filename%" | more
+) else (
+    echo File not found!
+)
+pause
+goto FILE_MANAGER
+
+:EDIT_FILE
+set /p filename="Enter filename to edit: "
+if exist "%filename%" (
+    notepad "%filename%"
+) else (
+    echo File not found!
+    pause
+)
+goto FILE_MANAGER
+
+:CREATE_FILE
+set /p filename="Enter new filename: "
+echo. > "%filename%"
+echo File created.
+pause
+goto FILE_MANAGER
+
+:DELETE_FILE
+set /p filename="Enter filename to delete: "
+if exist "%filename%" (
+    del "%filename%"
+    echo File deleted.
+) else (
+    echo File not found!
+)
+pause
+goto FILE_MANAGER
+
+:CHANGE_DIR
+set /p newdir="Enter directory path: "
+if exist "%newdir%\" (
+    cd /d "%newdir%"
+) else (
+    echo Directory not found!
+)
+goto FILE_MANAGER
+
+:COPY_FILE
+set /p source="Enter source file: "
+set /p dest="Enter destination: "
+if exist "%source%" (
+    copy "%source%" "%dest%"
+    echo File copied.
+) else (
+    echo Source file not found!
+)
+pause
+goto FILE_MANAGER
+
+:MOVE_FILE
+set /p source="Enter source file: "
+set /p dest="Enter destination: "
+if exist "%source%" (
+    move "%source%" "%dest%"
+    echo File moved.
+) else (
+    echo Source file not found!
+)
+pause
+goto FILE_MANAGER
+
+:SYSTEM_INFO
+cls
+echo.
+echo   ===============================================================
+echo    ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗
+echo    ██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║
+echo    ███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║
+echo    ╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║
+echo    ███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║
+echo    ╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝
+echo   ===============================================================
+echo.
+echo       1. System Summary      4. Disk Information     7. Back to Main
+echo       2. CPU Information     5. Memory Information
+echo       3. OS Information      6. Network Information
+echo.
+echo   ===============================================================
+
+choice /c 1234567 /n /m "Select an option: "
+
+if errorlevel 7 goto MAIN_MENU
+if errorlevel 6 (
+    ipconfig /all
+    pause
+    goto SYSTEM_INFO
+)
+if errorlevel 5 (
+    systeminfo | find "Total Physical Memory"
+    systeminfo | find "Available Physical Memory"
+    pause
+    goto SYSTEM_INFO
+)
+if errorlevel 4 (
+    wmic logicaldisk get caption,size,freespace
+    pause
+    goto SYSTEM_INFO
+)
+if errorlevel 3 (
+    systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+    pause
+    goto SYSTEM_INFO
+)
+if errorlevel 2 (
+    wmic cpu get name,NumberOfCores,NumberOfLogicalProcessors
+    pause
+    goto SYSTEM_INFO
+)
+if errorlevel 1 (
+    systeminfo
+    pause
+    goto SYSTEM_INFO
+)
+
+:: Additional menu sections would follow the same pattern
+:: (PROCESS_MANAGER, TEXT_EDITOR, etc.)
+
+goto MAIN_MENU
